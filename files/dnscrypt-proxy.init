@@ -81,6 +81,7 @@ create_config_file() {
     local dstf two_line_header forward_resolver
 
     [ ! -d "$CONFIG_DIR" ] && mkdir -p "$CONFIG_DIR"
+    [ -d "${CACHE_DIR}" ] || mkdir -p "${CACHE_DIR}
     [ -f "$config_path" ] && rm "$config_path"
 
     config_get      server_names            $1 'server_names'        ''
@@ -371,6 +372,7 @@ start_service() {
     then
         return 0
     fi
+    if service_running; then return 0; fi
     config_load dnscrypt-proxy
     config_foreach dnscrypt_instance dnscrypt-proxy
 }

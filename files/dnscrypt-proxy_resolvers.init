@@ -14,7 +14,7 @@ CONFIG_DIR=/var/etc
 LUCI_STATUS=/var/run/luci-reload-status
 LOG_FILE="/var/etc/dnscrypt"
 CACHE_DIR="/usr/share/dnscrypt-proxy"
-
+[ -d "${CACHE_DIR}" ] || mkdir -p "${CACHE_DIR}"
 #set -x
 
 . $IPKG_INSTROOT/lib/functions.sh
@@ -95,7 +95,8 @@ update() {
     json_set_namespace "resolvers" "pre"
     json_init
     echo "INFO: JSON parsing [$file]..." > $LUCI_STATUS
-    json_load "{'resolvers':$(cat $file)}"
+    echo "{'resolvers':$(cat $file)}" > "${file}.ld"
+    json_load_file "${file}.ld"
 
     local type resolvers resolver keys key val
     local sname name addrs ports proto stamp country description dnssec ipv6 location nofilter nolog
