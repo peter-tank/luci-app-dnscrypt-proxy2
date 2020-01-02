@@ -380,7 +380,7 @@ msgid "DNSCrypt Resolvers Manage"
 msgstr "DNSCrypt订阅管理"
 
 msgid "Update the resolvers here by a new apply."
-msgstr "应用时会自动检查并更新订阅。
+msgstr "应用时会自动检查并更新订阅。"
 
 msgid "DNSCrypt Resolver Editing -"
 msgstr "DNSCrypt节点编辑 - "
