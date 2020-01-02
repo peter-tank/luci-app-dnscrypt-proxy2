@@ -121,14 +121,14 @@ msgstr "服务器节点"
 msgid "Server Node Type"
 msgstr "服务器节点类型"
 
-msgid "DNSCrypt Servers"
-msgstr "DNSCrypt列表"
+msgid "DNSCrypt Resolvers"
+msgstr "订阅列表"
 
 msgid "DNSCrypt Proxy Settings"
 msgstr "DNSCrypt代理设置"
 
-msgid "Golbal Setting"
-msgstr "全局设置"
+msgid "Proxy Setting"
+msgstr "代理设置"
 
 msgid "DNSCrypt Proxy"
 msgstr "DNSCrypt代理"
@@ -150,6 +150,42 @@ msgstr "至少应为第2版："
 
 msgid "Update to final release from:"
 msgstr "更新到最新正式版本："
+
+msgid "Force Reload"
+msgstr "强制重启"
+
+msgid "Proxy force reload,"
+msgstr "强制重启代理："
+
+msgid "DNS resolve test"
+msgstr "DNS解析测试"
+
+msgid "Cache Management"
+msgstr "缓存文件"
+
+msgid "Running resolver details and offline caches manipulating."
+msgstr "节点详情和订阅的离线缓存文件控制。"
+
+msgid "Dump Details"
+msgstr "调取详情"
+
+msgid "Dump DNSCrypt resolver details to cache file:"
+msgstr "从代理实例调取节点详情到文件缓存："
+
+msgid "JSON dumped"
+msgstr "详情JSON已保存 "
+
+msgid "Remove cache files"
+msgstr "删除缓存文件"
+
+msgid "files"
+msgstr "文件"
+
+msgid "Remove cached resolvers info from:"
+msgstr "删除所有订阅的缓存："
+
+msgid "Resolver cache"
+msgstr "订阅缓存 "
 
 msgid "Listening address"
 msgstr "监听地址"
@@ -292,6 +328,12 @@ msgstr "DNS转发检查"
 msgid "Check DNSCrypt resolver:"
 msgstr "检测DNS服务器："
 
+msgid "Proxy ACL"
+msgstr "代理限制"
+
+msgid "ACL Setting"
+msgstr "访问设置"
+
 msgid "DNSCrypt Resolver ACL"
 msgstr "DNSCrypt节点控制"
 
@@ -333,27 +375,6 @@ msgstr "节点详情"
 
 msgid "Detailed resolvers JSON file `dnscrypt-proxy -json --list-all` or:"
 msgstr "有关节点情细情况的JSON文件，可在启动后手动执行`dnscrypt-proxy -json --list-all`来抓取，或："
-
-msgid "Update DNSCrypt Resolvers"
-msgstr "更新DNSCrypt订阅"
-
-msgid "Retrieve DNSCrypt resolvers:"
-msgstr "从订阅源更新："
-
-msgid "Reload DNS Resolver info:"
-msgstr "重载节点列表："
-
-msgid "DNSCrypt Resolvers update"
-msgstr "DNSCrypt订阅更新"
-
-msgid "Refresh Resolver Info"
-msgstr "更新节点信息"
-
-msgid "DNS resolve test"
-msgstr "DNS解析测试"
-
-msgid "Reload DNS resolver info:"
-msgstr "从缓存载入节点信息："
 
 msgid "DNSCrypt Resolvers Manage"
 msgstr "DNSCrypt订阅管理"

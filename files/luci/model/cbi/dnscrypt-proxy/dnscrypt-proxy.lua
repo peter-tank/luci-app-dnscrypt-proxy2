@@ -2,48 +2,13 @@
 -- Licensed to the public under the GNU General Public License v3.
 
 local m, _, s, o
-local cfg="dnscrypt-proxy"
-local sys = require "luci.sys"
-local http = require "luci.http"
-local disp = require "luci.dispatcher"
-local fs = require "nixio.fs"
+local cfg = "dnscrypt-proxy"
 
-local function has_bin(name)
-	return sys.call("command -v %s >/dev/null" %{name}) == 0
-end
-local has_dnscrypt = has_bin("dnscrypt-proxy")
-
-local bin_version
-local bin_file="/usr/sbin/dnscrypt-proxy"
-if not fs.access(bin_file)  then
- bin_version=translate("Not exist")
-else
- if not fs.access(bin_file, "rwx", "rx", "rx") then
-   fs.chmod(bin_file, 755)
- end
- bin_version=luci.util.trim(luci.sys.exec(bin_file .. " -version"))
- if not bin_version or bin_version == "" then
-     bin_version = translate("Unknown")
- end
-end
-
-m = Map(cfg, "%s - %s" %{translate("DNSCrypt Proxy"),
-		translate("Golbal Setting")})
-
--- [[ Binary ]]--
-s = m:section(SimpleSection, translate("Binary Management"), has_dnscrypt and "" or ('<b style="color:red">%s</b>' % translate("DNSCrypt Proxy binary not found.")))
-o = s:option(DummyValue,"dnscrypt_bin", translate("Binary update"))
-o.rawhtml  = true
-o.template = "dnscrypt-proxy/refresh"
-o.name = translate("Update")
-o.ret = bin_version:match('^1%..*') and  translate("Version2 atleast: ") or translate("Current version: ")
-o.value = o.ret .. bin_version
-o.description = translate("Update to final release from: ") .. "https://github.com/dnscrypt/dnscrypt-proxy/releases"
-o.write = function (self, ...) end
+m = Map(cfg, "%s - %s" %{translate("DNSCrypt Proxy"), translate("Proxy Setting")})
 
 -- [[ Proxy Setting ]]--
 local type = "dnscrypt-proxy"
-s = m:section(NamedSection, 'ns1', type, translate("DNSCrypt Proxy"))
+s = m:section(TypedSection, type)
 s.anonymous = false
 -- section might not exist
 function s.cfgvalue(self, section)
@@ -245,54 +210,6 @@ o = s:option(DynamicList, "cloaking_rules", translate("Cloaking rules"), transla
 o.optional = true
 o.rmempty = true
 o.placeholder = "eg: /usr/share/dnscrypt-proxy/cloaking-rules.txt"
-
--- [[ ACL Setting ]]--
-s = m:section(TypedSection, "server_addr", translate("DNSCrypt Resolver ACL"), translate("Allow all subscribed resolver servers in default.<br />The proxy will automatically pick the fastest, working servers from the list.<br />Resolver with detailed addresses is a must.") .. " https://dnscrypt.info/stamps/")
-	s.sectionhead = translate("Alias")
-	s.template = "cbi/tblsection"
-	s.addremove = true
-	s.anonymous = true
-	s.sortable = false
-	s.template_addremove = "dnscrypt-proxy/cbi_addserver"
-
-function s.create(self, section)
-	local a = m:formvalue("_newsrv.alias")
-	local c = m:formvalue("_newsrv.country")
-	local n = m:formvalue("_newsrv.name")
-	local ad = m:formvalue("_newsrv.addrs")
-	local po = m:formvalue("_newsrv.ports")
-	local pr = m:formvalue("_newsrv.proto")
-	local st = m:formvalue("_newsrv.stamp")
-
-	created = nil
-	if a ~= "" and n ~= "" and ad ~= "" and st ~= "" then
-		created = TypedSection.create(self, section)
-
-		self.map:set(created, "alias", a)
-		self.map:set(created, "country", c or "Unknown")
-		self.map:set(created, "name", n or "Custom")
-		self.map:set(created, "addrs", ad)
-		self.map:set(created, "ports", po or "ALL")
-		self.map:set(created, "proto", pr or "Unknown")
-		self.map:set(created, "stamp", st or "Error")
-	end
-end
-
-function s.parse(self, ...)
-	TypedSection.parse(self, ...)
-	if created then
-		m.uci:save("dnscrypt-proxy")
-		luci.http.redirect(disp.build_url("admin", "services", "dnscrypt-proxy", "dnscrypt-proxy"))
-	end
-end
-
-	s:option(DummyValue,"alias",translate("Alias"))
-	s:option(DummyValue,"country",translate("Country"))
-	s:option(DummyValue,"proto",translate("Protocol"))
-	s:option(DummyValue,"name",translate("Resolver"))
-	s:option(DummyValue,"addrs",translate("Address"))
-	s:option(DummyValue,"ports",translate("Server Port"))
-	s:option(DummyValue,"stamp",translate("Stamp"))
 
 return m
 

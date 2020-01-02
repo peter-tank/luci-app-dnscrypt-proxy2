@@ -13,16 +13,12 @@
 		murl = dataname;
 		var osta = document.getElementById(dataname+'-status');	XHR.get('<%=luci.dispatcher.build_url("admin", "services", "dnscrypt-proxy","update_c")%>',
 			{ set:"dnscrypt_bin", url:surl },
-			function(x,rv)
-			{
-				obtn.disabled = false;
-				obtn.value    = '<%= self.name or translate("Refresh Data")%>';
-				obtn.onclick = function (){alert("<%:No new data!%>");};
-				osta.innerText = rv.status;
-				return (rv.err === 0);
-			}
-		);
-		return ret;
+			function(x, rv) {
+			if(x.readyState === 4 ) {
+			if(x.status === 200) {try{res = JSON.parse(x.responseText);}catch(e){res=null;}
+			if(res !==null && typeof(res) === "object") {osta.innerText = res.status; obtn.disabled = false; obtn.value = '<%= self.name or translate("Refresh Data")%>';obtn.onclick = function (){alert("<%:No new data!%>");}; return (rv.err === 0);}
+			}}});
+			return false;
 	}
 
 	function parse_gittag(gtag, obtn, osta, sprefix, scver)
@@ -48,7 +44,7 @@
 		return ret;
 	}
 
-	function refresh_data(btn,dataname)
+	function refresh_data_<%=self.option%>(btn,dataname)
 	{
 		btn.disabled = true;
 		btn.value    = '<%:Refresh...%> ';
@@ -79,36 +75,24 @@
 		}
 		XHR.get('<%=luci.dispatcher.build_url("admin", "services", "dnscrypt-proxy","refresh_c")%>',
 			{ set:murl },
-			function(x,rv)
-			{
-			var s = document.getElementById(dataname+'-status');
-			if (s)
-			{
-				if (rv.ret=="0")
-				s.innerHTML ="<font color='green'>"+"<%:No new data!%> "+"</font>";
-				else if(rv.ret=="-1")
-				{
-					s.innerHTML ="<font color='red'>"+"<%:Refresh Error!%> "+"</font>";
-				}	
-				else
-					{
-				s.innerHTML ="<font color='green'>"+"<%:Refresh OK!%> "+"<%= self.ret or translate('Total Records:')%>"+rv.ret+"</font>";
-			}
-
-
-			}
-
+			function(x, rv) {
+			if(x.readyState === 4 ) {
+			if(x.status === 200) {try{res = JSON.parse(x.responseText);}catch(e){res=null;}
+			if(res !==null && typeof(res) === "object") {
+			var s = document.getElementById(dataname+'-status'); 
+			if (s) {
+				if (res.ret=="0") s.innerHTML ="<font color='green'>"+"<%:No new data!%> "+"</font>";
+				else if(res.ret=="-1") s.innerHTML ="<font color='red'>"+"<%:Refresh Error!%> "+"</font>";
+				else	s.innerHTML ="<font color='green'>"+"<%:Refresh OK!%> "+"<%= self.ret or translate('Total Records:')%>"+res.ret+"</font>";
 				btn.disabled = false;
-				btn.value    = '<%= self.name or translate('Refresh Data')%>';
-			}
-		);
-
-		return false;
+				btn.value    = '<%= self.name or translate('Refresh Data')%>';}}
+			}}});
+			return false;
 	}
 //]]></script>
 
 
-<input type="button" class="cbi-button cbi-input-reload" value="<%= self.name or translate('Refresh Data')%> " onclick="return refresh_data(this,'<%=self.option%>')" />
+<input type="button" class="cbi-button cbi-input-reload" value="<%= self.name or translate('Refresh Data')%> " onclick="return refresh_data_<%=self.option%>(this,'<%=self.option%>')" />
 <span id="<%=self.option%>-status"><em><%=self.value%></em></span>
 
 <%+cbi/valuefooter%>

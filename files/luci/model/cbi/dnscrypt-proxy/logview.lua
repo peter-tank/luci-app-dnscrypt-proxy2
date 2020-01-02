@@ -7,7 +7,7 @@ local HTTP = require "luci.http"
 local UCI = luci.model.uci.cursor()
 
 local m = Map("dnscrypt-proxy")
-
+m.pageaction=false
 -- log directory
 log_dir = UCI:get_first(m.config, "global", "log_dir") or "/tmp"
 run_dir = UCI:get_first(m.config, "global", "run_dir") or "/var/etc"

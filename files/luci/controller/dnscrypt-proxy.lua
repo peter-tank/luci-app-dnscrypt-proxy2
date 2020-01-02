@@ -8,11 +8,13 @@ function index()
 		return
 	end
 
-	entry({"admin", "services", "dnscrypt-proxy"},alias("admin", "services", "dnscrypt-proxy", "dnscrypt-proxy"),_("DNSCrypt Proxy"), 10).dependent = false
+	entry({"admin", "services", "dnscrypt-proxy"},alias("admin", "services", "dnscrypt-proxy", "global"),_("DNSCrypt Proxy"), 10).dependent = false
 
-	entry({"admin", "services", "dnscrypt-proxy", "dnscrypt-proxy"},cbi("dnscrypt-proxy/dnscrypt-proxy"),_("DNSCrypt Proxy"), 10).dependent = true
+	entry({"admin", "services", "dnscrypt-proxy", "global"},cbi("dnscrypt-proxy/global"),_("Overview"), 10).leaf = true
 	entry({"admin", "services", "dnscrypt-proxy", "dnscrypt-resolvers"},cbi("dnscrypt-proxy/dnscrypt-resolvers"),_("DNSCrypt Resolvers"), 20).leaf = true
-	entry({"admin", "services", "dnscrypt-proxy", "dnscrypt-resolvers"},arcombine(cbi("dnscrypt-proxy/dnscrypt-resolvers"), cbi("dnscrypt-proxy/dnscrypt-resolvers-config")),_("DNSCrypt Servers"), 30).dependent = true
+	entry({"admin", "services", "dnscrypt-proxy", "dnscrypt-resolvers"},arcombine(cbi("dnscrypt-proxy/dnscrypt-resolvers"), cbi("dnscrypt-proxy/dnscrypt-resolvers-config")),_("DNSCrypt Resolvers"), 25).dependent = true
+	entry({"admin", "services", "dnscrypt-proxy", "dnscrypt-proxy-acl"},cbi("dnscrypt-proxy/dnscrypt-proxy-acl"),_("Proxy ACL"), 30).leaf = true
+	entry({"admin", "services", "dnscrypt-proxy", "dnscrypt-proxy"},cbi("dnscrypt-proxy/dnscrypt-proxy"),_("Proxy Setting"), 40).dependent = true
 	entry({"admin", "services", "dnscrypt-proxy", "refresh_c"}, call("refresh_cmd"))
 	entry({"admin", "services", "dnscrypt-proxy", "resolve_c"}, call("resolve_cmd"))
 	entry({"admin", "services", "dnscrypt-proxy", "update_c"}, call("update_cmd"))
@@ -47,15 +49,22 @@ function refresh_cmd()
 local set = luci.http.formvalue("set")
 local icount, retstring = 0, "-1"
 
-if set == "dnslist_up" then
-	retstring = "1"
-	icount = 1
-elseif set == "resolvers_up" then
-	local bin_file = "/usr/sbin/dnscrypt-proxy"
-	retstring = "2"
-	icount = 2
+if set == "remove_caches" then
+	local dir = "/usr/share/dnscrypt-proxy"
+	local output = { }
+	exec("/bin/busybox", { "find", dir, "-type", "f" },
+		function(chunk) output[#output+1] = chunk:match("%S+") end)
+	exec("/bin/busybox", { "find", dir, "-type", "f", "-exec", "rm", "{}", ";" })
+	icount = #output
+	retstring = "[%d]<br />%s" % { icount, table.concat(output, "<br />") }
+elseif set == "dump_resolver" then
+	local output = "/usr/share/dnscrypt-proxy/running.json"
+	luci.sys.exec("/usr/sbin/dnscrypt-proxy -json --list-all -config /var/etc/dnscrypt-proxy-ns1.conf > %s" % output)
+	local lua_data = luci.jsonc.parse(nixio.fs.readfile(output))
+	icount = #lua_data
+	retstring = "[%d] - %s" % { icount, output }
 else
-	ecount = -1
+	icount = -1
 	retstring = "Unkown CMD: " .. set
 end
 

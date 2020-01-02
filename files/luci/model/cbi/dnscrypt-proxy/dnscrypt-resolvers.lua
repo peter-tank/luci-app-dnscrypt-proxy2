@@ -16,7 +16,7 @@ for _, s in pairs(dc:dns_list()) do
 end
 
 -- [[ Servers Setting ]]--
-m = Form(cfg, translate("DNSCrypt Servers"))
+m = Form(cfg, translate("DNSCrypt Resolvers"))
 
 local type = "dnscrypt-proxy"
 s = m:section(NamedSection, 'ns1', type, translate("Choose a resolver to configure"), translate("Input the name to re-configure, if your resolvers not updated correctly and not showns up."))
@@ -36,26 +36,5 @@ for k, v in pairs(dnslist_table) do ret = "%s\n%03d) %s" % {ret, k, v} end
 return ret
 end
 o.write = function (...) end
-
-o = s:option(Button,"resolvers_up", translate("Update DNSCrypt Resolvers"))
-o.rawhtml  = true
-o.template = "dnscrypt-proxy/refresh"
-o.ret = translate("Update")
-o.value = " %d %s" % {#resolvers, translate("Resolvers")}
-o.description = translate("Retrieve DNSCrypt resolvers: ") .. "https://download.dnscrypt.info/dnscrypt-proxy/{*}.[md|minisig|json]"
-
-o = s:option(Button, "dnslist_up", translate("Refresh Resolver Info"))
-o.rawhtml  = true
-o.template = "dnscrypt-proxy/refresh"
-o.name = translate("Update")
-o.ret = translate("Resolver")
-o.value = " %d %s" % {#dnslist_table, translate("Records")}
-o.description = translate("Reload DNS resolver info: ") .. "/usr/share/dnscrypt-proxy/{*}.[md|json]"
-o.inputstyle = "apply"
-
-o = s:option(Button, "dnscrypt_ck", translate("DNS resolve test"))
-o.rawhtml  = true
-o.template = "dnscrypt-proxy/resolve"
-o.description = translate("Check DNSCrypt resolver: ") .. "/usr/sbin/dnscrypt-proxy -resolve www.google.com"
 
 return m
