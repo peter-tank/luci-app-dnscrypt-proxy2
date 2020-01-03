@@ -81,7 +81,7 @@ create_config_file() {
     local dstf two_line_header forward_resolver
 
     [ ! -d "$CONFIG_DIR" ] && mkdir -p "$CONFIG_DIR"
-    [ -d "${CACHE_DIR}" ] || mkdir -p "${CACHE_DIR}
+    [ -d "${CACHE_DIR}" ] || mkdir -p "${CACHE_DIR}"
     [ -f "$config_path" ] && rm "$config_path"
 
     config_get      server_names            $1 'server_names'        ''
