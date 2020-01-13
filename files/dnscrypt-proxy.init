@@ -306,12 +306,12 @@ cert_ignore_timestamp,false
         if [ $cache_mode -eq 1 ] ; then
             local redirect_https site_addr schema port
             redirect_https="$(uci_get uhttpd     main       redirect_https     '0')"
-            site_addr="$(uci_get      uhttpd     main       listen_http        '[::]:80')"
+            site_addr="$(uci_get      uhttpd     main       listen_https        '[::]:80')"
             schema=http
             port=${site_addr##*:}
-            [ x"${port}" != "x80" -a $redirect_https -eq 1 ] && schema=https
+            [ x"${port}" != "x80" -a $redirect_https -eq 1 ] && opkg list-installed | grep libustream-openssl && schema=https
             [ x"${port}" == "x80" -o x"${port}" == "x443" ] && port=
-            urls="${schema}://127.0.0.1${port:+:${port}}/${urls##*/}"
+            urls="${schema}://localhost${port:+:${port}}/${urls##*/}"
         fi
 
         append_multivalue_param "urls"          "$urls"                  $config_path

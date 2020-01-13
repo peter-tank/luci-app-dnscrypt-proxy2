@@ -197,6 +197,7 @@ m.on_before_commit = function (self)
 	 	self.redirect = luci.dispatcher.build_url("admin/services/dnscrypt-proxy/dnscrypt-resolvers")
 	end
 	c:unload("ucitrack")
+	luci.util.exec("/etc/init.d/ucitrack reload")
 end
 
 if cfg then
