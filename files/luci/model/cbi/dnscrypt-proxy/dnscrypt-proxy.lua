@@ -2,6 +2,8 @@
 -- Licensed to the public under the GNU General Public License v3.
 
 local m, _, s, o
+local dc = require "luci.tools.dnscrypt".init()
+local resolvers = dc:resolvers_list(true)
 local cfg = "dnscrypt-proxy"
 
 m = Map(cfg, "%s - %s" %{translate("DNSCrypt Proxy"), translate("Proxy Setting")})
@@ -42,9 +44,11 @@ o.optional = false
 o.rmempty = false
 
 o = s:option(DynamicList, "resolvers", translate("Enabled Resolvers"), translate("Available Resolvers: ") .. "https://download.dnscrypt.info/dnscrypt-resolvers/v2/{*}.md")
-o:value("public-resolvers", translate("public-resolvers"))
-o:value("opennic", translate("opennic"))
-o:value("parental-control", translate("parental-control"))
+local opt, val
+for _, val in ipairs(resolvers) do
+  opt = luci.util.split(val, "|")[1]
+  o:value(opt, translate(opt))
+end
 o.optional = false
 o.rmempty = false
 o.placeholder = "onion-services"

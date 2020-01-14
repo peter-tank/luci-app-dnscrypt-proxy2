@@ -140,7 +140,7 @@ function unique_list(data, id) {
 				<input type="text" class="cbi-input-text" id="_newsrv.stamp" name="_newsrv.stamp" data-optional="false" placeholder="<%:Stamp%>" />
 			</td>
 			<td class="cbi-section-table-cell">
-				<input type="text" class="cbi-input-text" id="_newsrv.alias" name="_newsrv.alias" placeholder="<%:Alias%>" / >
+				<input type="text" class="cbi-input-text" id="_newsrv.alias" name="_newsrv.alias" placeholder="<%:Alias%>" />
 			</td>
 			<td class="cbi-section-table-cell">
 				<input type="submit" class="cbi-button cbi-button-add" name="cbi.cts.<%=self.config%>.<%=self.sectiontype%>.<%=section%>" id="cbi.cts.<%=self.config%>.<%=self.sectiontype%>.<%=section%>" value="<%:Add%>" />
@@ -192,6 +192,6 @@ function unique_list(data, id) {
 		document.getElementById('_newsrv.country').addEventListener('change', function() {try{cbi_init_dnslist();}catch(e){}});
 		document.getElementById('_newsrv.resolvers').addEventListener('change', function() {try{cbi_init_dnslist();}catch(e){}});
 		document.getElementById('_newsrv.proto').addEventListener('change', function() {try{cbi_init_dnslist();}catch(e){}});
-	document.getElementById('_newsrv.name').addEventListener('change', function() {try{cbi_init_dnslist();}catch(e){}});
+		document.getElementById('_newsrv.name').addEventListener('change', function() {try{cbi_init_dnslist();}catch(e){}});
 		document.getElementById('_newsrv.addrs').addEventListener('change', function() {try{cbi_init_dnslist();}catch(e){}});
 	//]]></script>
