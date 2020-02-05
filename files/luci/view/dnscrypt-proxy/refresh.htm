@@ -4,7 +4,7 @@
 	local sys = require "luci.sys"
 -%>
 <script type="text/javascript">//<![CDATA[
-
+<% if self.option == "dnscrypt_bin" then -%>
 	function update_bin(obtn, dataname, surl)
 	{
 		obtn.disabled = true;
@@ -27,23 +27,27 @@
 		tagv = gtag.name;
 		dlfile = 'dnscrypt-proxy-%s-%s.tar.gz'.format(sprefix, tagv);
 		obtn.title = "";
-		osta.innerHTML = '<font color="red">%s</font><br /><div class="cbi-section-descr">%s</div>'.format(dlfile, gtag.body);
-		if(scver === tagv) {obtn.value    = '<%:No new data!%>';}
+		osta.innerHTML = '<font color="red">%s</font><br /><div class="cbi-section-descr"><pre>%s</pre></div>'.format(dlfile, gtag.body);
+		if(scver === tagv) {obtn.value = '<%:No new data!%>';}
 		else if(! gtag.assets) {osta.innerText = '<%:Refresh Error!%>'; ret = false;}
 		else {
-		_assets = gtag.assets;
-		osta.innerText = dlfile;
-		for (var idx = 0; idx < _assets.length; idx++)
-				{
-					var dls=_assets[idx];
-					if(dls.name === dlfile) {
-					obtn.value    = '<%= self.name or translate("Refresh Data")%>' + tagv; osta.innerHTML = '<a href="%s">%s</a>(%00.1fMB)<br /><div class="cbi-section-descr">%s<div>'.format(dls.browser_download_url, dlfile,dls.size/1024/1024,gtag.body); obtn.title = dls.browser_download_url; obtn.onclick = function(){update_bin(this,'<%=self.option%>',this.title);}; break;};
+			_assets = gtag.assets;
+			osta.innerText = dlfile;
+			for (var idx = 0; idx < _assets.length; idx++) {
+				var dls=_assets[idx];
+				if(dls.name === dlfile) {
+					obtn.value = '<%:Update%> ' + tagv;
+					obtn.title = dls.browser_download_url;
+					obtn.onclick = function() { update_bin(this,'<%=self.option%>',this.title); };
+					obtn.disabled = false;
+					osta.innerHTML = '<a href="%s">%s</a>(%00.1fMB)<br /><div class="cbi-section-descr"><pre>%s</pre></div>'.format(dls.browser_download_url, dlfile, dls.size/1024/1024, gtag.body);
+					break;
 				}
+			}
 		}
-		obtn.disabled = false;
 		return ret;
 	}
-
+<%- end %>
 	function refresh_data_<%=self.option%>(btn,dataname)
 	{
 		btn.disabled = true;
@@ -72,7 +76,7 @@
 			x.send(null);
 			});
 			return false;
-		}
+		} else {
 		XHR.get('<%=luci.dispatcher.build_url("admin", "services", "dnscrypt-proxy","refresh_c")%>',
 			{ set:murl },
 			function(x, rv) {
@@ -88,6 +92,7 @@
 				btn.value    = '<%= self.name or translate('Refresh Data')%>';}}
 			}}});
 			return false;
+		}
 	}
 //]]></script>
 
