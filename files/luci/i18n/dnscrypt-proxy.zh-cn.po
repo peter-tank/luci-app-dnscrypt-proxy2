@@ -193,7 +193,7 @@ msgstr "监听地址"
 msgid "Enabled Resolvers"
 msgstr "订阅列表"
 
-msgid "Fallback resolver"
+msgid "Fallback resolvers"
 msgstr "备用DNS"
 
 msgid "DNS resolver on query fails or for forced forwarding domain list."

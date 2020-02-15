@@ -71,14 +71,14 @@ dnscrypt_instance() {
 }
 
 create_config_file() {
-    local server_names listen_address query_meta max_clients fallback_resolver netprobe_address
+    local server_names listen_address query_meta max_clients fallback_resolvers netprobe_address
     local disabled_server_names log_file log_level timeout keepalive cert_refresh_delay netprobe_timeout
     local log_files_max_size log_files_max_age log_files_max_backups reject_ttl
     local reject_ttl cache_size cache_min_ttl cache_max_ttl cache_neg_min_ttl cache_neg_max_ttl
     local lb_strategy blocked_query_response force_defaults force_gets
     local proxy http_proxy cloaking_rules cloak_ttl
     local config_path="$2"
-    local dstf two_line_header forward_resolver
+    local dstf two_line_header forward_resolvers
 
     [ ! -d "$CONFIG_DIR" ] && mkdir -p "$CONFIG_DIR"
     [ -d "${CACHE_DIR}" ] || mkdir -p "${CACHE_DIR}"
@@ -88,7 +88,7 @@ create_config_file() {
     config_get      listen_addresses        $1 'listen_addresses'    '127.0.0.1:5335'
     config_get      query_meta              $1 'query_meta'          ''
     config_get      max_clients             $1 'max_clients'         '250'
-    config_get      fallback_resolver       $1 'fallback_resolver'   '114.114.114.114:53'
+    config_get      fallback_resolvers       $1 'fallback_resolvers'   '114.114.114.114:53'
     config_get      netprobe_address        $1 'netprobe_address'    '114.114.114.114:53'
     config_get      disabled_server_names   $1 'disabled_server_names' ''
 
@@ -122,7 +122,7 @@ create_config_file() {
     append_multivalue_param "listen_addresses"    "$listen_addresses"     $config_path
     append_multivalue_param "query_meta"          "$query_meta"           $config_path
     append_param            "max_clients"         "$max_clients"          $config_path
-    append_str_param        "fallback_resolver"   "$fallback_resolver"    $config_path
+    append_multivalue_param        "fallback_resolvers"   "$fallback_resolvers"    $config_path
     append_str_param        "netprobe_address"    "$netprobe_address"     $config_path
     append_multivalue_param "disabled_server_names" "$disabled_server_names" $config_path
 
@@ -190,6 +190,7 @@ cert_ignore_timestamp,false
 
     handle_list_file() {
         local file
+        local fwd="$1"
         if [ x"${1:0:4}" == x"http" ]; then file=$(cache_file "${1}" 0);
         elif [ x"${1:0:1}" == x"/" ]; then file="${1}";
         else file="$CACHE_DIR/${1}";
@@ -201,6 +202,7 @@ cert_ignore_timestamp,false
         else
             cat "$file" > "$tmpf"
         fi
+        [ -z "$fwd" ] || sed -i -e "s/$/ $fwd/g" "$tmpf"
         echo "$tmpf"
     }
 
@@ -236,8 +238,8 @@ cert_ignore_timestamp,false
 
     dstf="$CONFIG_DIR/dnscrypt_forwarding_rules.txt"
     two_line_header='#dnscrypt forwarding rule file.\n'
-    forward_resolver=$fallback_resolver
-    append_list_file $1 "forwarding_rules" "forwarding_rules" "$dstf" "" $config_path "$two_line_header" $forward_resolver
+    forward_resolvers="$fallback_resolvers"
+    append_list_file $1 "forwarding_rules" "forwarding_rules" "$dstf" "" $config_path "$two_line_header" $forward_resolvers
 
     dstf="$CONFIG_DIR/dnscrypt_cloaking_rules.txt"
     two_line_header='#dnscrypt cloaking rules file.\n'
