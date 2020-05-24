@@ -190,7 +190,7 @@ cert_ignore_timestamp,false
 
     handle_list_file() {
         local file
-        local fwd="$1"
+        local fwd="$2"
         if [ x"${1:0:4}" == x"http" ]; then file=$(cache_file "${1}" 0);
         elif [ x"${1:0:1}" == x"/" ]; then file="${1}";
         else file="$CACHE_DIR/${1}";
@@ -198,11 +198,11 @@ cert_ignore_timestamp,false
         [ x"$file" == x -o ! -f "${file}" ] && return
         local tmpf="/tmp/dnscrypt_${file##*/}"
         if [ x"${file##*.}" == xconf -o x"${file##*.}" == xadblock ]; then
-            sed -ne "s/^\(address\|server\)=\/\([^/]*\)\/.*$/\2 $2/p" -e "s/ *$//g" "$file" > "$tmpf"
+            sed -ne "s/^\(address\|server\)=\/\([^/]*\)\/.*$/\2 $fwd/p" -e "s/ *$//g" "$file" > "$tmpf"
         else
+            [ -z "$fwd" ] || sed -i -e "s/$/ $fwd/g" "$tmpf"
             cat "$file" > "$tmpf"
         fi
-        [ -z "$fwd" ] || sed -i -e "s/$/ $fwd/g" "$tmpf"
         echo "$tmpf"
     }
 
