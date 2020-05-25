@@ -8,7 +8,7 @@ function index()
 		return
 	end
 
-	entry({"admin", "services", "dnscrypt-proxy"},alias("admin", "services", "dnscrypt-proxy", "global"),_("DNSCrypt Proxy"), 10).dependent = false
+	entry({"admin", "services", "dnscrypt-proxy"},alias("admin", "services", "dnscrypt-proxy", "global"),_("DNSCrypt Proxy"), 10).acl_depends = { "luci-app-dnscrypt-proxy2" }
 
 	entry({"admin", "services", "dnscrypt-proxy", "global"},cbi("dnscrypt-proxy/global"),_("Overview"), 10).leaf = true
 	entry({"admin", "services", "dnscrypt-proxy", "dnscrypt-resolvers"},cbi("dnscrypt-proxy/dnscrypt-resolvers"),_("DNSCrypt Resolvers"), 20).leaf = true
