@@ -40,8 +40,7 @@ end
 
 function resolvers_list(self, with_src)
 	local _, cfg, r = nil, nil, { }
-
-	for cfg in (fs.glob("/etc/config/*")) do
+	for cfg in (fs.glob(uci_r:get_confdir() .. "/*")) do
 	cfg=fs.basename(cfg)
 	uci_r:foreach(cfg, dsec,
 		function(s)
