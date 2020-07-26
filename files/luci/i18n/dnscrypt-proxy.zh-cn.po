@@ -307,6 +307,24 @@ msgstr "主要用来测试自建DNSCrypt服务器。"
 msgid "One or more requred configure is missing!"
 msgstr "至少需要1个正确配置并更新的订阅！"
 
+msgid "Address filter list(ipset)"
+msgstr "节点地址过滤(ipset)"
+
+msgid "The ipset list name that DNSCrypt server addresses try appending to if any."
+msgstr "向使用中的 ipset 列表追加过滤出来的DNSCrypt 节点地址。"
+
+msgid "Follwing available one (auto)"
+msgstr "检测已知 (auto)"
+
+msgid "PassWall direct (vpsiplist)"
+msgstr 加到"PassWall 直走(vpsiplist)"
+
+msgid "Clash direct (localnetwork)"
+msgstr "Clash 直走(localnetwork)"
+
+msgid "SSR-Plus direct (ss_spec_wan_ac)"
+msgstr "SSR+ 直走(ss_spec_wan_ac)"
+
 msgid "Total %d records."
 msgstr "总计 %d 条记录。"
 
@@ -328,17 +346,17 @@ msgstr "DNS转发检查"
 msgid "Check DNSCrypt resolver:"
 msgstr "检测DNS服务器："
 
-msgid "Proxy ACL"
-msgstr "代理限制"
+msgid "Resolver ACL"
+msgstr "节点流控"
 
 msgid "ACL Setting"
-msgstr "访问设置"
+msgstr "流控设置"
 
 msgid "DNSCrypt Resolver ACL"
-msgstr "DNSCrypt节点控制"
+msgstr "DNSCrypt节点流控"
 
-msgid "Allow all subscribed resolver servers in default.<br />The proxy will automatically pick the fastest, working servers from the list.<br />Resolver with detailed addresses is a must."
-msgstr "默认允许访问所有已知DNSCrypt节点，且自动选择最快的有效服务器。<br />只有存在详细地址的节点才能添加进来。"
+msgid "DNSCrypt will automatically pick the fastest, working servers from the list<br />All or filtered out addresses are prepared for 'Address filter list(ipset)'.<br />Resolver with detailed addresses is a must."
+msgstr "DNSCrypt 会自动选择最快的有效服务器。<br />所有已知或过滤出来的地址将用于 '节点地址过滤(ipset)' <br />只有存在详细地址的节点才能添加进来。"
 
 msgid "DNS Resolver Filter"
 msgstr "节点篩选器"
@@ -348,6 +366,9 @@ msgstr "解析服务器"
 
 msgid "Stamp"
 msgstr "戳记"
+
+msgid "more than 100, try filter out to show details..."
+msgstr "多于100条，请进一步篩选以显示节点详情。"
 
 msgid "Choose a resolver to configure"
 msgstr "请选择一个订阅来配置"

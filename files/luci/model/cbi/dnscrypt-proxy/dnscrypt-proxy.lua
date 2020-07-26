@@ -215,5 +215,15 @@ o.optional = true
 o.rmempty = true
 o.placeholder = "eg: /usr/share/dnscrypt-proxy/cloaking-rules.txt"
 
+o = s:option(Value, "addr_filter", translate("Address filter list(ipset)"), translate("The ipset list name that DNSCrypt server addresses try appending to if any."))
+o:value("auto", translate("Follwing available one (auto)"))
+o:value("vpsiplist", translate("PassWall direct (vpsiplist)"))
+o:value("localnetwork", translate("Clash direct (localnetwork)"))
+o:value("ss_spec_wan_ac", translate("SSR-Plus direct (ss_spec_wan_ac)"))
+o.optional = false
+o.rmempty = true
+o.default = "auto"
+o.placeholder = "e.g.: gfwlist"
+
 return m
 

@@ -12,8 +12,8 @@ function index()
 
 	entry({"admin", "services", "dnscrypt-proxy", "global"},cbi("dnscrypt-proxy/global"),_("Overview"), 10).leaf = true
 	entry({"admin", "services", "dnscrypt-proxy", "dnscrypt-resolvers"},cbi("dnscrypt-proxy/dnscrypt-resolvers"),_("DNSCrypt Resolvers"), 20).leaf = true
-	entry({"admin", "services", "dnscrypt-proxy", "dnscrypt-resolvers"},arcombine(cbi("dnscrypt-proxy/dnscrypt-resolvers"), cbi("dnscrypt-proxy/dnscrypt-resolvers-config")),_("DNSCrypt Resolvers"), 25).dependent = true
-	entry({"admin", "services", "dnscrypt-proxy", "dnscrypt-proxy-acl"},cbi("dnscrypt-proxy/dnscrypt-proxy-acl"),_("Proxy ACL"), 30).leaf = true
+	entry({"admin", "services", "dnscrypt-proxy", "dnscrypt-resolvers"},arcombine(cbi("dnscrypt-proxy/dnscrypt-resolvers"), cbi("dnscrypt-proxy/dnscrypt-resolvers-config")),_("Resolvers"), 25).dependent = true
+	entry({"admin", "services", "dnscrypt-proxy", "dnscrypt-proxy-acl"},cbi("dnscrypt-proxy/dnscrypt-proxy-acl"),_("Resolver ACL"), 30).leaf = true
 	entry({"admin", "services", "dnscrypt-proxy", "dnscrypt-proxy"},cbi("dnscrypt-proxy/dnscrypt-proxy"),_("Proxy Setting"), 40).dependent = true
 	entry({"admin", "services", "dnscrypt-proxy", "refresh_c"}, call("refresh_cmd"))
 	entry({"admin", "services", "dnscrypt-proxy", "resolve_c"}, call("resolve_cmd"))

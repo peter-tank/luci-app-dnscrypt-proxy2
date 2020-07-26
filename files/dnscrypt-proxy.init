@@ -27,31 +27,35 @@ LUCI_STATUS=/var/run/luci-reload-status
 LOG_FILE="/var/etc/dnscrypt"
 CACHE_DIR="/usr/share/dnscrypt-proxy"
 
-uci_get_resolver_addrs() {
-local __PKGNAME="${NAME}"
-local __SECTIONTYPE="server_addr"
-local ret
+# has side effects when there is a option names the same 'addrs' in shadowsocksr config file
+# keep this uci function excuted at the bottom of scripts
+uci_filter_resolver_addrs() {
+	local __PKGNAME="${NAME}"
+	local __SECTIONTYPE="server_addr"
+	local ret
 
-	get_resolver_addrs()
+	filter_resolver_addrs()
 	{
 		local __TYPE="$1"
 		local __OPTION="$2"
 		set | sed -ne "s/^CONFIG_.*_addrs='\([^']*\)'$/\1/p" | sed -e "s/[, ]/\n/g" | sort | uniq
 	}
 
-config_load "${__PKGNAME}"
-ret=$(get_resolver_addrs "${__SECTIONTYPE}" "addrs")
-[ -z "${ret}" ] && {
-	CONFIG_APPEND=1
-	config_list_foreach "ns1" "resolvers" config_load
-	ret=$(get_resolver_addrs ".*" "addrs")
-}
-echo "${ret}"
+	config_load "${__PKGNAME}"
+	# tricky way first for all server_addr addrs in DNSCrypt ACL
+	ret=$(filter_resolver_addrs "${__SECTIONTYPE}" "addrs")
+	# or get all addrs from all resolvers configured.
+	[ -z "${ret}" ] && {
+		CONFIG_APPEND=1
+		config_list_foreach "ns1" "resolvers" config_load
+		ret=$(filter_resolver_addrs ".*" "addrs")
+	}
+	echo "${ret}"
 }
 
 uci_get_by_name() {
 	local ret=$(uci get dnscrypt-proxy.$1.$2 2>/dev/null)
-	echo ${ret:=$3}
+	echo "${ret:=$3}"
 }
 
 boot() {
@@ -274,7 +278,7 @@ cert_ignore_timestamp,false
         local config_path=$2
         local sdns
 
-        [[ x$sdns == x ]] && return 0
+        [[ "x$sdns" == x ]] && return 0
         echo "[static.'$sdns']"        >> $config_path
         append_str_param        "sdns"         "$sdns"          $config_path
     }
@@ -292,7 +296,7 @@ cert_ignore_timestamp,false
         config_load ${resolver}
         [ $? -eq 0 ] || return 0
         config_get      urls                    $section 'urls'          ''
-        [[ x$urls == x ]] && return 0
+        [[ "x$urls" == x ]] && return 0
         echo "[sources.'${resolver}']" >> $config_path
 
         config_get      urls                    $section 'urls'          ''
@@ -332,7 +336,7 @@ cert_ignore_timestamp,false
 multivalue_parse() {
     local param_values=$(echo $1 | sed -e 's/[, ]/\n/g' -e 's/\n\n/\n/g')
 
-    [[ x == x${param_values} ]] && echo -n "[]" && return 1
+    [[ x == "x${param_values}" ]] && echo -n "[]" && return 1
     local p
     p=$(for p in ${param_values}; do echo -n "'${p}'"; done)
     echo -n "["
@@ -370,12 +374,27 @@ append_param() {
 }
 
 start_service() {
-    if [ -n "${dnscrypt_boot}" ]
-    then
-        return 0
+    #config_load dnscrypt-proxy
+
+    local addr_filter list
+    config_get      addr_filter               ns1 'addr_filter'           'auto'
+    if [ "${addr_filter}" == "auto" ]; then
+        for list in vpsiplist localnetwork ss_spec_wan_ac; do
+            ipset list -n "${list}" >/dev/null 2>&1
+            [ $? -eq 0 ] && addr_filter="${list}" && break
+        done
     fi
-    if service_running; then return 0; fi
-    config_load dnscrypt-proxy
+    ipset list -n "${addr_filter}" >/dev/null 2>&1 && {
+        local ipset_shell="${CONFIG_DIR}/dnscrypt_filter2_${addr_filter}.sh"
+        uci_filter_resolver_addrs > "${ipset_shell}"
+        sed -i 's/^\(.*\)$/ipset add '"${addr_filter}"' "\1" nomatch/g' "${ipset_shell}"
+        chmod +x "${ipset_shell}"
+        echo "### appending resolver addresses to ipset list ${addr_filter}..." >> "${LOG_FILE}.log"
+        wc -l "${ipset_shell}" >> "${LOG_FILE}.log" 2>&1
+        date >"${ipset_shell}.log"
+	${ipset_shell} >>"${ipset_shell}.log" 2>&1 &
+    }
+
     config_foreach dnscrypt_instance dnscrypt-proxy
 }
 
@@ -394,11 +413,6 @@ service_triggers() {
         procd_add_raw_trigger "interface.*.up" 2000 /etc/init.d/dnscrypt-proxy reload
     fi
     procd_add_reload_trigger 'dnscrypt-proxy'
-}
-
-service_running() {
-    service_check $PROG
-    return $?
 }
 
 cache_file() {

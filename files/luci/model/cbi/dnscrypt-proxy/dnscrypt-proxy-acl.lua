@@ -1,6 +1,7 @@
 -- Copyright (C) 2019 github.com/peter-tank
 -- Licensed to the public under the GNU General Public License v3.
 
+local disp = require "luci.dispatcher"
 local m, _, s, o
 local cfg="dnscrypt-proxy"
 
@@ -8,7 +9,7 @@ m = Map(cfg, "%s - %s" %{translate("DNSCrypt Proxy"),
 		translate("ACL Setting")})
 
 -- [[ ACL Setting ]]--
-s = m:section(TypedSection, "server_addr", translate("DNSCrypt Resolver ACL"), translate("Allow all subscribed resolver servers in default.<br />The proxy will automatically pick the fastest, working servers from the list.<br />Resolver with detailed addresses is a must.") .. " https://dnscrypt.info/stamps/")
+s = m:section(TypedSection, "server_addr", translate("DNSCrypt Resolver ACL"), translate("DNSCrypt will automatically pick the fastest, working servers from the list<br />All or filtered out addresses are prepared for 'Address filter list(ipset)'.<br />Resolver with detailed addresses is a must.") .. " https://dnscrypt.info/stamps/")
 	s.sectionhead = translate("Alias")
 	s.template = "cbi/tblsection"
 	s.addremove = true
@@ -43,7 +44,7 @@ function s.parse(self, ...)
 	TypedSection.parse(self, ...)
 	if created then
 		m.uci:save("dnscrypt-proxy")
-		luci.http.redirect(disp.build_url("admin", "services", "dnscrypt-proxy", "dnscrypt-proxy"))
+		luci.http.redirect(disp.build_url("admin", "services", "dnscrypt-proxy", "dnscrypt-proxy-acl"))
 	end
 end
 
