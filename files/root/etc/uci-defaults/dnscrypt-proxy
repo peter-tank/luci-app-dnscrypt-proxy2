@@ -1,15 +1,15 @@
 #!/bin/sh
 
 uci -q batch <<-EOF >/dev/null
-	delete ucitrack.@dnscrypt-proxy[-1]
-	add ucitrack dnscrypt-proxy
-	set ucitrack.@dnscrypt-proxy[-1].init=dnscrypt-proxy
+	delete ucitrack.@dnscrypt_proxy[-1]
+	add ucitrack dnscrypt_proxy
+	set ucitrack.@dnscrypt_proxy[-1].init=dnscrypt-proxy
 	commit ucitrack
-	delete firewall.dnscrypt-proxy
-	set firewall.dnscrypt-proxy=include
-	set firewall.dnscrypt-proxy.type=script
-	set firewall.dnscrypt-proxy.path=/var/etc/dnscrypt-proxy.include
-	set firewall.dnscrypt-proxy.reload=1
+	delete firewall.dnscrypt_proxy
+	set firewall.dnscrypt_proxy=include
+	set firewall.dnscrypt_proxy.type=script
+	set firewall.dnscrypt_proxy.path=/var/etc/dnscrypt-proxy.include
+	set firewall.dnscrypt_proxy.reload=1
 	commit firewall
 EOF
 

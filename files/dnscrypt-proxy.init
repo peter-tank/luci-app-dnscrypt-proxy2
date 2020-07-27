@@ -74,6 +74,33 @@ dnscrypt_instance() {
     procd_close_instance
 }
 
+include_for_firewall_reload() {
+	local FWI=$(uci get firewall.dnscrypt_proxy.path 2>/dev/null)
+
+	[ -n "$FWI" ] || return 0
+	echo '#!/bin/sh' >$FWI
+	cat <<-EOF >>"$FWI"
+    addr_filter=\$(uci get ${NAME}.ns1.addr_filter 2>/dev/null)
+    if [ "\${addr_filter:-auto}" == "auto" ]; then
+        for list in vpsiplist localnetwork ss_spec_wan_ac; do
+            ipset list -n "\${list}" >/dev/null 2>&1
+            [ \$? -eq 0 ] && addr_filter="\${list}" && break
+        done
+    fi
+    ipset list -n "\${addr_filter}" >/dev/null 2>&1 && {
+        ipset_shell=\$(find ${CONFIG_DIR} -name "dnscrypt_filter2_*.sh" | head -n1)
+        [ -z "\${ipset_shell}" ] || {
+        sed -i 's/^ipset add [^ ]* \(.*\)$/ipset add '"\${addr_filter}"' \1/g' "\${ipset_shell}"
+        echo "### \$(date) on firewall reload" >> "${LOG_FILE}.log"
+        echo "### appending resolver addresses to ipset list \${addr_filter}..." >> "${LOG_FILE}.log"
+        wc -l "\${ipset_shell}" >> "${LOG_FILE}.log" 2>&1
+        date >"\${ipset_shell}.log"
+	\${ipset_shell} >>"\${ipset_shell}.log" 2>&1 &
+        }
+    }
+	EOF
+}
+
 create_config_file() {
     local server_names listen_address query_meta max_clients fallback_resolvers netprobe_address
     local disabled_server_names log_file log_level timeout keepalive cert_refresh_delay netprobe_timeout
@@ -394,6 +421,7 @@ start_service() {
         date >"${ipset_shell}.log"
 	${ipset_shell} >>"${ipset_shell}.log" 2>&1 &
     }
+    include_for_firewall_reload
 
     config_foreach dnscrypt_instance dnscrypt-proxy
 }
