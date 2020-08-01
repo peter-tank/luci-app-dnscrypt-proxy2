@@ -11,7 +11,7 @@ function index()
 	entry({"admin", "services", "dnscrypt-proxy"},alias("admin", "services", "dnscrypt-proxy", "global"),_("DNSCrypt Proxy"), 10).acl_depends = { "luci-app-dnscrypt-proxy2" }
 
 	entry({"admin", "services", "dnscrypt-proxy", "global"},cbi("dnscrypt-proxy/global"),_("Overview"), 10).leaf = true
-	entry({"admin", "services", "dnscrypt-proxy", "dnscrypt-resolvers"},cbi("dnscrypt-proxy/dnscrypt-resolvers"),_("DNSCrypt Resolvers"), 20).leaf = true
+	entry({"admin", "services", "dnscrypt-proxy", "dnscrypt-resolvers"},cbi("dnscrypt-proxy/dnscrypt-resolvers"),_("Resolvers"), 20).leaf = true
 	entry({"admin", "services", "dnscrypt-proxy", "dnscrypt-resolvers"},arcombine(cbi("dnscrypt-proxy/dnscrypt-resolvers"), cbi("dnscrypt-proxy/dnscrypt-resolvers-config")),_("Resolvers"), 25).dependent = true
 	entry({"admin", "services", "dnscrypt-proxy", "dnscrypt-proxy-acl"},cbi("dnscrypt-proxy/dnscrypt-proxy-acl"),_("Resolver ACL"), 30).leaf = true
 	entry({"admin", "services", "dnscrypt-proxy", "dnscrypt-proxy"},cbi("dnscrypt-proxy/dnscrypt-proxy"),_("Proxy Setting"), 40).dependent = true

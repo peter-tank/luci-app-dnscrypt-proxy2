@@ -95,8 +95,8 @@ update() {
     json_set_namespace "resolvers" "pre"
     json_init
     echo "INFO: JSON parsing [$file]..." > $LUCI_STATUS
-    echo "{'resolvers':$(cat $file)}" > "${file}.ld"
-    json_load_file "${file}.ld"
+    echo "{'resolvers':$(cat $file)}" > "/tmp/${file##*\}.ld"
+    json_load_file "/tmp/${file##*\}.ld"
 
     local type resolvers resolver keys key val
     local sname name addrs ports proto stamp country description dnssec ipv6 location nofilter nolog

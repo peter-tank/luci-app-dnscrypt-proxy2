@@ -11,14 +11,14 @@ m.pageaction=false
 -- log directory
 log_dir = UCI:get_first(m.config, "global", "log_dir") or "/tmp"
 run_dir = UCI:get_first(m.config, "global", "run_dir") or "/var/etc"
-dnsmasq_dir = UCI:get_first(m.config, "global", "dnsmasq_dir") or "/tmp/dnsmasq"
 local logfile_list = {}
 
 local logfs = {
 "%s/dnscrypt*" % run_dir,
-"%s.*/*.*" % dnsmasq_dir,
-"%s/*.*" % "/usr/share/dnscrypt-proxy",
+"%s/dnsmasq.*/*.*" % log_dir,
+"%s/*" % "/usr/share/dnscrypt-proxy",
 "%s/dnscrypt_*" % log_dir,
+"%s/*.ld" % log_dir,
 }
 local _, dir, ns, lv, lfile
 for _, dir in pairs(logfs) do

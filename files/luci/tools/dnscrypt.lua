@@ -104,21 +104,6 @@ function dns_list(self, rf, cf, prf)
 	return r
 end
 
-function del_resolved(self, cfg, sec)
-	local r = false
-
-		uci_r:foreach(cfg, dsec,
-			function(s)
-				if sec and s.name == sec then
-					r = uci_r:delete(dsec, s['.name'])
-					return false
-				end
-				r = uci_r:delete(dsec, s['.name'])
-			end)
-
-	return r
-end
-
 function init(cursor)
 	uci_r = cursor or uci_r or uci.cursor()
 	uci_s = uci_r:substate()

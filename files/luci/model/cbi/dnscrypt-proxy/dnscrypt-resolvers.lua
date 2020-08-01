@@ -2,6 +2,7 @@
 -- Licensed to the public under the GNU General Public License v3.
 
 local m, _, s, o, id, cfg, src, val, k, v
+local uci = luci.model.uci.cursor()
 local dc = require "luci.tools.dnscrypt".init()
 local resolvers = dc:resolvers_list(true)
 local disp = require "luci.dispatcher"
@@ -39,5 +40,16 @@ for k, v in pairs(dnslist_table) do ret = "%s\n%03d) %s" % {ret, k, v} end
 return ret
 end
 o.write = function (...) end
+
+o = s:option(Button,"trash", translate("Trash Resolver Info"))
+o.inputstyle = "reset"
+o.write = function()
+local resolver
+for _, val in pairs(resolvers) do
+  resolver = luci.util.split(val, "|")[1]
+  uci:delete_all(resolver, "dnscrypt", function(s) return true end)
+  uci:save(resolver)
+end
+end
 
 return m

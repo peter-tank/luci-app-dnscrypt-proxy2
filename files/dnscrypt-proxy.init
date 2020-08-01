@@ -41,7 +41,7 @@ uci_filter_resolver_addrs() {
 		set | sed -ne "s/^CONFIG_.*_addrs='\([^']*\)'$/\1/p" | sed -e "s/[, ]/\n/g" | sort | uniq
 	}
 
-	config_load "${__PKGNAME}"
+	# config_load "${__PKGNAME}"
 	# tricky way first for all server_addr addrs in DNSCrypt ACL
 	ret=$(filter_resolver_addrs "${__SECTIONTYPE}" "addrs")
 	# or get all addrs from all resolvers configured.
@@ -71,6 +71,7 @@ dnscrypt_instance() {
 
     procd_open_instance
     procd_set_param command $PROG -config "$config_path" -pidfile "$SERVICE_PID_FILE"
+    procd_set_param file "$config_path"
     procd_close_instance
 }
 
@@ -82,7 +83,7 @@ include_for_firewall_reload() {
 	cat <<-EOF >>"$FWI"
     addr_filter=\$(uci get ${NAME}.ns1.addr_filter 2>/dev/null)
     if [ "\${addr_filter:-auto}" == "auto" ]; then
-        for list in vpsiplist localnetwork ss_spec_wan_ac; do
+        for list in vpsiplist localnetwork gmlan; do
             ipset list -n "\${list}" >/dev/null 2>&1
             [ \$? -eq 0 ] && addr_filter="\${list}" && break
         done
@@ -401,12 +402,12 @@ append_param() {
 }
 
 start_service() {
-    #config_load dnscrypt-proxy
+    config_load dnscrypt-proxy
 
     local addr_filter list
     config_get      addr_filter               ns1 'addr_filter'           'auto'
     if [ "${addr_filter}" == "auto" ]; then
-        for list in vpsiplist localnetwork ss_spec_wan_ac; do
+        for list in vpsiplist localnetwork gmlan; do
             ipset list -n "${list}" >/dev/null 2>&1
             [ $? -eq 0 ] && addr_filter="${list}" && break
         done
@@ -427,20 +428,12 @@ start_service() {
 }
 
 service_triggers() {
-    local trigger
-    local triggerlist="$(uci_get dnscrypt-proxy.@global[0].procd_trigger)"
-
-    PROCD_RELOAD_DELAY=2000
-    if [ -n "${triggerlist}" ]
-    then
-        for trigger in ${triggerlist}
-        do
-            procd_add_interface_trigger "interface.*.up" "${trigger}" /etc/init.d/dnscrypt-proxy reload
-        done
-    else
-        procd_add_raw_trigger "interface.*.up" 2000 /etc/init.d/dnscrypt-proxy reload
-    fi
     procd_add_reload_trigger 'dnscrypt-proxy'
+}
+
+reload_service() {
+    stop
+    start
 }
 
 cache_file() {

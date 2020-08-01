@@ -317,13 +317,13 @@ msgid "Follwing available one (auto)"
 msgstr "检测已知 (auto)"
 
 msgid "PassWall direct (vpsiplist)"
-msgstr 加到"PassWall 直走(vpsiplist)"
+msgstr "PassWall 直走(vpsiplist)"
 
 msgid "Clash direct (localnetwork)"
 msgstr "Clash 直走(localnetwork)"
 
-msgid "SSR-Plus direct (ss_spec_wan_ac)"
-msgstr "SSR+ 直走(ss_spec_wan_ac)"
+msgid "SSR-Plus direct (gmlan)"
+msgstr "SSR+ 直走(gmlan)"
 
 msgid "Total %d records."
 msgstr "总计 %d 条记录。"
@@ -336,6 +336,9 @@ msgstr "已知节点："
 
 msgid "DNSCrypt Resolver Info"
 msgstr "DNSCrypt节点信息"
+
+msgid "Trash Resolver Info"
+msgstr "清空节点信息"
 
 msgid "DNS Forward"
 msgstr " DNS转发"

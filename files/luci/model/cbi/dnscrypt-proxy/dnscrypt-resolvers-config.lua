@@ -51,8 +51,8 @@ end
 
 o = s:option(Value, "urls", translate("Source URL"), translate("Split MultiValues by a comma"))
 o.rmempty = true
-o.default = ""
-o.placeholder = "https://download.dnscrypt.info/dnscrypt-resolvers/v2/public-resolvers.md"
+o.default = "https://download.dnscrypt.info/dnscrypt-resolvers/v3/public-resolvers.md"
+o.placeholder = "https://xxx.xxx.xxx/public-resolvers.md"
 
 --o = s:option(Value, "cache_file", translate("Cache File"), translate("Change this only on duplicating this resolver to another source when retrieving: ") .. "/usr/share/dnscrypt-proxy/{*}.md")
 --o.default = "public-resolvers.md"
@@ -75,7 +75,7 @@ o.optional = false
 o.rmempty = true
 o:depends("cache_mode", true)
 
-o = s:option(Value, "minisign_key", translate("MiniSign Key"), translate("Resolvers singed by: ") .. "https://download.dnscrypt.info/dnscrypt-resolvers/v2/minisign.pub")
+o = s:option(Value, "minisign_key", translate("MiniSign Key"), translate("Resolvers singed by: ") .. "https://download.dnscrypt.info/dnscrypt-resolvers/v3/minisign.pub")
 o.default = "RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3"
 o.optional = false
 o.placeholder = o.default
@@ -121,7 +121,7 @@ end
 function edit_list(m)
 s = m:section(NamedSection, sid, "dnscrypt", translate("DNSCrypt Resolver Editing - ") .. sid)
 s.anonymous = true
-s.addremove   = false
+s.addremove   = true
 
 o = s:option(Value, "name", translate("Resolver"))
 o.default = sid
