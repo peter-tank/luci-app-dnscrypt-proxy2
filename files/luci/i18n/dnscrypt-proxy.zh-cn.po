@@ -322,8 +322,8 @@ msgstr "PassWall 直走(vpsiplist)"
 msgid "Clash direct (localnetwork)"
 msgstr "Clash 直走(localnetwork)"
 
-msgid "SSR-Plus direct (gmlan)"
-msgstr "SSR+ 直走(gmlan)"
+msgid "SSR-Plus direct (ss_spec_wan_ac)"
+msgstr "SSR+ 直走(ss_spec_wan_ac)"
 
 msgid "Total %d records."
 msgstr "总计 %d 条记录。"

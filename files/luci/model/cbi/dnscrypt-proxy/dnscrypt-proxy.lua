@@ -219,7 +219,7 @@ o = s:option(Value, "addr_filter", translate("Address filter list(ipset)"), tran
 o:value("auto", translate("Follwing available one (auto)"))
 o:value("vpsiplist", translate("PassWall direct (vpsiplist)"))
 o:value("localnetwork", translate("Clash direct (localnetwork)"))
-o:value("gmlan", translate("SSR-Plus direct (gmlan)"))
+o:value("ss_spec_wan_ac", translate("SSR-Plus direct (ss_spec_wan_ac)"))
 o.optional = false
 o.rmempty = true
 o.default = "auto"
