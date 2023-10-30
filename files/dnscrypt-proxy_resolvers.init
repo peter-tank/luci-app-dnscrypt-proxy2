@@ -43,7 +43,7 @@ cache_file() {
     local tmpf="/tmp/dnscrypt_${cdl##*/}.dl"
     local line
     [ ! -f "$fn" ] && {
-        wget -q --no-check-certificate -t 3 -O "$tmpf" "$cdl"
+        wget -q --no-check-certificate -T 3 -O "$tmpf" "$cdl"
         [ $? -eq 0 ] || return
         line=$(cat "$tmpf" | wc -l)
         [ $line -gt 1 ] || return
